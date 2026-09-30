@@ -15,28 +15,39 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       # ese primer paso es obligatorio porque este checkout lo que hace por defecto
       # es clonar el proyecto que está en nuestro repositorio a la máquina virtual
       # que esta habilitando github.
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.8'
-      # aca lo que se está ejecutando en esta acción precargada, por atrás 
-      # ejecuta todos los comandos necesarios para instalar python en la VM
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        
+      # aca se instala uv
+      # ejecuta todos los comandos necesarios para instalar uv
 
       - name: Instalar dependencias
         run: |
-          python -m pip install --upgrade pip
-          pip install pytest
-      # instala pytest en la VM
+          uv sync
+      # instala todas las dependencias incluyendo ruff, pytest, mypy
+      # crea tambien el environment
       # con 'run' ejecutas comandos
       
-      - name: Run tests
+      - name: Ruff lint
         run: |
-          python -m pytest tests/test_main_v1.py
+          uv run ruff check .
+
+      - name: Ruff format
+        run: |
+          uv run ruff format --check .
+
+      - name: Mypy
+        run: |
+          uv run mypy my_app
+
+      - name: Run Tests
+        run: |
+          uv run pytest
 
       # correr los test con pytest
       

@@ -1,6 +1,5 @@
-import pytest
-
 from my_app import main_v1
+
 #import unittest
 
 # class TestMain(unittest.TestCase):
